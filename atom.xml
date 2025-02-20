@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://liantoki.github.io</id>
+    <title>hzh&apos;s blog</title>
+    <updated>2025-02-20T14:45:38.115Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://liantoki.github.io"/>
+    <link rel="self" href="https://liantoki.github.io/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://liantoki.github.io/images/avatar.png</logo>
+    <icon>https://liantoki.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2025, hzh&apos;s blog</rights>
+    <entry>
+        <title type="html"><![CDATA[C语言宏用法总结]]></title>
+        <id>https://liantoki.github.io/post/c-yu-yan-hong-yong-fa-zong-jie/</id>
+        <link href="https://liantoki.github.io/post/c-yu-yan-hong-yong-fa-zong-jie/">
+        </link>
+        <updated>2025-02-17T02:51:24.000Z</updated>
+        <content type="html"><![CDATA[<div id="toc"></div>
+<h1 id="c语言宏用法总结">C语言宏用法总结</h1>
+<h2 id="目录">目录</h2>
+<ol>
+<li><a href="#macro-definition">宏定义</a><br>
+1.1 <a href="#macro-constant">宏常量</a><br>
+1.2 <a href="#macro-statement">宏语句</a><br>
+1.3 <a href="#macro-function">宏函数</a><br>
+1.4 <a href="#macro-with-params">带参数宏定义</a></li>
+<li><a href="#operators">运算符</a><br>
+2.1 <a href="#operator-sharp">#运算符</a><br>
+2.2 <a href="#operator-double-sharp">##运算符</a></li>
+<li><a href="#variadic-macros">可变宏</a><br>
+3.1 <a href="#variadic-basic">基本定义</a><br>
+3.2 <a href="#variadic-empty-args">空参数处理</a><br>
+3.3 <a href="#variadic-notes">注意事项</a></li>
+<li><a href="#advanced-macros">预定义宏与高级技巧</a><br>
+4.1 <a href="#predefined-macros">预定义宏</a><br>
+4.2 <a href="#conditional-compilation">条件编译</a><br>
+4.3 <a href="#debugging-tips">调试技巧</a><br>
+4.4 <a href="#alternatives">替代方案</a></li>
+</ol>
+<hr>
+<p><a id="macro-definition"></a></p>
+<h2 id="1-宏定义">1. 宏定义</h2>
+<p><a id="macro-constant"></a></p>
+<h3 id="11-宏常量">1.1 宏常量</h3>
+<ul>
+<li><strong>不带参数</strong><pre><code class="language-c">#define PI 3.14
+</code></pre>
+</li>
+<li><strong>带参数</strong><pre><code class="language-c">#define SQUARE(x) ((x) * (x))
+</code></pre>
+</li>
+</ul>
+<p><a id="macro-statement"></a></p>
+<h3 id="12-宏语句">1.2 宏语句</h3>
+<ul>
+<li><strong>不带参数</strong><pre><code class="language-c">#define LOG_HELLO printf(&quot;hello&quot;)
+</code></pre>
+</li>
+<li><strong>带参数</strong><pre><code class="language-c">#define LOG_MSG(x) printf(&quot;%s\n&quot;, x)
+</code></pre>
+</li>
+</ul>
+<p><a id="macro-function"></a></p>
+<h3 id="13-宏函数">1.3 宏函数</h3>
+<ul>
+<li><strong>格式规范</strong><br>
+使用 <code>do { ... } while(0)</code> 避免语法问题：<pre><code class="language-c">#define SAFE_CALL(x) do { func(x); cleanup(); } while(0)
+</code></pre>
+</li>
+</ul>
+<p><a id="macro-with-params"></a></p>
+<h3 id="14-带参数宏定义">1.4 带参数宏定义</h3>
+<ul>
+<li><strong>核心规则</strong>
+<ul>
+<li>参数替换为符号，无类型检查</li>
+<li>宏名与括号间不能有空格</li>
+</ul>
+</li>
+<li><strong>与函数的区别</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>宏</th>
+<th>函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>展开时间</strong></td>
+<td>预处理阶段</td>
+<td>运行时</td>
+</tr>
+<tr>
+<td><strong>类型检查</strong></td>
+<td>无</td>
+<td>有</td>
+</tr>
+<tr>
+<td><strong>内存分配</strong></td>
+<td>无</td>
+<td>需要栈空间</td>
+</tr>
+<tr>
+<td><strong>代码体积</strong></td>
+<td>展开后代码膨胀</td>
+<td>固定体积</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a id="operators"></a></p>
+<h2 id="2-运算符">2. 运算符</h2>
+<p><a id="operator-sharp"></a></p>
+<h3 id="21-运算符">2.1 <code>#</code> 运算符</h3>
+<ul>
+<li><strong>作用</strong>：将参数转换为字符串<pre><code class="language-c">#define STR(x) #x
+STR(hello) // 展开为 &quot;hello&quot;
+</code></pre>
+</li>
+</ul>
+<p><a id="operator-double-sharp"></a></p>
+<h3 id="22-运算符">2.2 <code>##</code> 运算符</h3>
+<ul>
+<li><strong>作用</strong>：强制拼接标识符<pre><code class="language-c">#define CONCAT(a, b) a##b
+CONCAT(var, 1) // 展开为 var1
+</code></pre>
+</li>
+<li><strong>必要性</strong>
+<ul>
+<li>直接拼接 <code>xy</code> 会保留空格，<code>##</code> 确保合并为单一标识符</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><a id="variadic-macros"></a></p>
+<h2 id="3-可变宏">3. 可变宏</h2>
+<p><a id="variadic-basic"></a></p>
+<h3 id="31-基本定义">3.1 基本定义</h3>
+<pre><code class="language-c">#define LOG(fmt, ...) printf(fmt, __VA_ARGS__)
+LOG(&quot;Value: %d&quot;, 42); // 展开为 printf(&quot;Value: %d&quot;, 42)
+</code></pre>
+<p><a id="variadic-empty-args"></a></p>
+<h3 id="32-空参数处理">3.2 空参数处理</h3>
+<table>
+<thead>
+<tr>
+<th>标准</th>
+<th>解决方案</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GNU</strong></td>
+<td><code>##__VA_ARGS__</code></td>
+<td><code>printf(fmt, ##__VA_ARGS__)</code></td>
+</tr>
+<tr>
+<td><strong>C99</strong></td>
+<td>手动添加空参数占位符</td>
+<td><code>LOG(&quot;Hello&quot;, );</code></td>
+</tr>
+<tr>
+<td><strong>C11</strong></td>
+<td><code>__VA_OPT__(,)</code></td>
+<td><code>printf(fmt __VA_OPT__(,) ...)</code></td>
+</tr>
+</tbody>
+</table>
+<p><a id="variadic-notes"></a></p>
+<h3 id="33-注意事项">3.3 注意事项</h3>
+<ol>
+<li><strong>参数顺序</strong>：<code>...</code> 必须位于参数列表末尾</li>
+<li><strong>编译器兼容性</strong>
+<ul>
+<li>GCC：支持 <code>##__VA_ARGS__</code></li>
+<li>MSVC：需启用 <code>/Zc:preprocessor</code></li>
+</ul>
+</li>
+<li><strong>类型安全</strong>：需手动匹配格式化字符串与参数类型</li>
+</ol>
+<hr>
+<p><a id="advanced-macros"></a></p>
+<h2 id="4-预定义宏与高级技巧">4. 预定义宏与高级技巧</h2>
+<p><a id="predefined-macros"></a></p>
+<h3 id="41-预定义宏">4.1 预定义宏</h3>
+<ul>
+<li><strong>编译器内置宏</strong>：<br>
+用于获取编译环境或代码位置信息：<pre><code class="language-c">printf(&quot;File: %s, Line: %d\n&quot;, __FILE__, __LINE__);   // 输出当前文件和行号
+printf(&quot;Compiled on: %s %s\n&quot;, __DATE__, __TIME__);   // 输出编译日期和时间
+</code></pre>
+</li>
+</ul>
+<p><a id="conditional-compilation"></a></p>
+<h3 id="42-条件编译与宏结合">4.2 条件编译与宏结合</h3>
+<ul>
+<li><strong>根据宏定义选择代码路径</strong>：<pre><code class="language-c">#define DEBUG 1
+#if DEBUG
+  #define LOG(x) printf(&quot;[DEBUG] %s\n&quot;, x)
+#else
+  #define LOG(x) (void)0
+#endif
+</code></pre>
+</li>
+<li><strong>检查宏是否存在</strong>：<pre><code class="language-c">#ifdef PI
+  // PI已定义时执行
+#else
+  #define PI 3.14
+#endif
+</code></pre>
+</li>
+</ul>
+<p><a id="debugging-tips"></a></p>
+<h3 id="43-宏调试技巧">4.3 宏调试技巧</h3>
+<ul>
+<li><strong>查看宏展开结果</strong>：<br>
+使用编译器选项（如GCC的<code>-E</code>）输出预处理后的代码：<pre><code class="language-bash">gcc -E source.c -o source.i
+</code></pre>
+</li>
+<li><strong>静态断言（C11）</strong>：<br>
+结合宏实现编译时检查：<pre><code class="language-c">#define STATIC_ASSERT(cond) _Static_assert(cond, #cond)
+STATIC_ASSERT(sizeof(int) == 4); // 若int不为4字节则编译失败
+</code></pre>
+</li>
+</ul>
+<p><a id="alternatives"></a></p>
+<h3 id="44-宏的替代方案">4.4 宏的替代方案</h3>
+<ul>
+<li><strong>内联函数</strong>：<br>
+避免宏的副作用，支持类型检查：<pre><code class="language-c">static inline int square(int x) { return x * x; }
+</code></pre>
+</li>
+<li><strong>泛型选择（C11）</strong>：<br>
+使用<code>_Generic</code>替代宏实现泛型逻辑：<pre><code class="language-c">#define TYPE_NAME(x) _Generic((x), \
+  int: &quot;int&quot;, double: &quot;double&quot;, default: &quot;unknown&quot;)
+</code></pre>
+</li>
+</ul>
+<hr>
+<h2 id="补充宏的常见陷阱与最佳实践">补充：宏的常见陷阱与最佳实践</h2>
+<ol>
+<li>
+<p><strong>多次求值问题</strong>：<br>
+避免在宏参数中使用自增/自减操作：</p>
+<pre><code class="language-c">#define SQUARE(x) ((x) * (x))
+int a = 5;
+SQUARE(a++); // 展开为 (a++) * (a++) → 结果不可预测！
+</code></pre>
+</li>
+<li>
+<p><strong>参数未括号化</strong>：<br>
+宏参数需用括号包裹以防止运算符优先级问题：</p>
+<pre><code class="language-c">#define ADD(x, y) x + y       // 错误：ADD(1, 2)*3 → 1 + 2*3
+#define SAFE_ADD(x, y) ((x) + (y)) // 正确
+</code></pre>
+</li>
+<li>
+<p><strong>命名冲突与作用域管理</strong>：</p>
+<ul>
+<li>使用<code>#undef</code>释放不再需要的宏：<pre><code class="language-c">#define TEMP_MACRO 42
+// 使用后释放
+#undef TEMP_MACRO
+</code></pre>
+</li>
+<li>在局部作用域内定义宏（通过<code>#pragma push_macro/pop_macro</code>，部分编译器支持）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<div style="text-align: center; margin-top: 20px;">
+  <a href="#toc">返回目录</a>
+</div>
+```
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[模块接口设计规范]]></title>
+        <id>https://liantoki.github.io/post/mo-kuai-jie-kou-she-ji-gui-fan/</id>
+        <link href="https://liantoki.github.io/post/mo-kuai-jie-kou-she-ji-gui-fan/">
+        </link>
+        <updated>2025-01-29T14:57:41.000Z</updated>
+        <content type="html"><![CDATA[<!--- 目录导航 -->
+<div style="border: 1px solid #e1e4e8; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+  <h2 style="margin-top: 0;">📑 目录</h2>
+  <ul>
+    <li><a href="#名词解释">名词解释</a></li>
+    <li><a href="#模块接口设计">模块接口设计</a>
+      <ul>
+        <li><a href="#usb接口">USB接口</a></li>
+        <li><a href="#hdmi接口">HDMI接口</a></li>
+        <li><a href="#晶振接口">晶振接口</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<!--- 名词解释 -->
+<p><a id="名词解释"></a></p>
+<h2 id="名词解释">📖 名词解释</h2>
+<h3 id="1-3w规则">1. 3W规则</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>定义：</strong>信号线的中心间距不少于3倍线宽时，可保证70%的电场不互相干扰。<br>
+<strong>应用：</strong>
+- 2W间距 → 50%电场隔离
+- 10W间距 → 98%电场隔离
+</div>
+<h3 id="2-20h规则">2. 20H规则</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>定义：</strong>电源层相对地层内缩20H（H为介质厚度），限制70%电场在接地区域内。<br>
+<strong>设计建议：</strong>
+- 内缩1mm或>20mil（优先40mil）
+- 内缩100H → 98%电场隔离
+</div>
+<h3 id="3-esd器件静电放电保护器件">3. ESD器件（静电放电保护器件）</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>作用：</strong>防止静电放电（ESD）损坏电路，泄放瞬时高压（数千伏）。<br>
+<strong>典型器件：</strong>TVS二极管、压敏电阻（MOV）
+</div>
+<h3 id="4-emi滤波器电磁干扰滤波器">4. EMI滤波器（电磁干扰滤波器）</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>作用：</strong>抑制高频噪声和电磁辐射，确保EMC合规性。<br>
+<strong>典型应用：</strong>共模电感、π型滤波器
+</div>
+<h3 id="5-zdiff差分阻抗">5. Zdiff（差分阻抗）</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>定义：</strong>USB差分信号线特性阻抗，需控制为<mark>90Ω</mark>。<br>
+<strong>关键因素：</strong>线宽、间距、PCB介质材料
+</div>
+<h3 id="6-共模电感">6. 共模电感</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>作用：</strong>抑制共模噪声，降低EMI辐射。<br>
+<strong>原理：</strong>对共模噪声高阻抗，对差分信号低阻抗
+</div>
+<!--- 模块接口设计 -->
+<p><a id="模块接口设计"></a></p>
+<h2 id="️-模块接口设计">🛠️ 模块接口设计</h2>
+<p><a id="usb接口"></a></p>
+<h3 id="usb接口">🔌 USB接口</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<ol>
+  <li>接口靠近板边放置，方便拔插</li>
+  <li>ESD器件靠近接口，走线先经过ESD器件</li>
+  <li>EMI滤波器/共模电感靠近插座，防止辐射</li>
+  <li>阻抗控制：Zdiff=90Ω</li>
+  <li>差分信号总长≤6000mil</li>
+  <li>差分打孔包地，换层加屏蔽地过孔</li>
+  <li>差分对内等长误差±5mil</li>
+</ol>
+</div>
+<p><a id="hdmi接口"></a></p>
+<h3 id="hdmi接口">📺 HDMI接口</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<ol>
+  <li>优先板边放置（根据结构需求）</li>
+  <li>差分阻抗100Ω，单线50Ω</li>
+  <li>ESD器件紧贴端子</li>
+  <li>差分对内误差＜5mil，组内误差＜10mil</li>
+  <li>与其他信号间距≥15mil或3W</li>
+  <li>换层时加回流地过孔</li>
+</ol>
+</div>
+<p><a id="晶振接口"></a></p>
+<h3 id="晶振接口">⏳ 晶振接口</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<ol>
+  <li>走线最短化，避免过孔</li>
+  <li>GND过孔包围（包地处理）</li>
+  <li>同层不铺铜，其他层铺铜需净空</li>
+</ol>
+</div>]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[linux下安装arm交叉编译链]]></title>
+        <id>https://liantoki.github.io/post/an-zhuang-zui-xin-ban-arm-jiao-cha-bian-yi-lian/</id>
+        <link href="https://liantoki.github.io/post/an-zhuang-zui-xin-ban-arm-jiao-cha-bian-yi-lian/">
+        </link>
+        <updated>2025-01-12T10:45:53.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="一-版本选择">一、版本选择</h2>
+<p>访问 <a href="https://releases.linaro.org/components/toolchain/binaries/">https://releases.linaro.org/components/toolchain/binaries/</a>，页面呈现如下内容：<br>
+<img src="https://liantoki.github.io/post-images/1736684625936.png" alt="" loading="lazy"><br>
+依据自身需求点击进入特定版本，该页面提供了适用于 arm 架构的各类编译链。<br>
+<img src="https://liantoki.github.io/post-images/1736684949477.png" alt="" loading="lazy"></p>
+<h2 id="二-编译链详情">二、编译链详情</h2>
+<ol>
+<li><strong>aarch64-elf</strong>
+<ul>
+<li>面向 64 位 ARM 架构（AArch64），主要应用于嵌入式系统开发。其生成的可执行文件和库不依赖完整的 Linux 操作系统环境，常用于裸机编程或简单嵌入式系统。</li>
+</ul>
+</li>
+<li><strong>aarch64-linux - gnu</strong>
+<ul>
+<li>同样针对 64 位 ARM 架构，用于创建能在 Linux 操作系统环境下运行的可执行文件和库，支持完整的 Linux 系统调用与功能，适用于开发 64 位 ARM Linux 系统上的应用程序和系统组件。</li>
+</ul>
+</li>
+<li><strong>aarch64_be-elf</strong>
+<ul>
+<li>类似 aarch64-elf，但采用大端序（big - endian）字节序，而 aarch64 - elf 通常为小端序（little - endian），在特定硬件或系统要求大端序的场景中使用。</li>
+</ul>
+</li>
+<li><strong>aarch64_be-linux-gnu</strong>
+<ul>
+<li>针对 64 位 ARM 大端序架构的 Linux 系统编译链，生成的可执行文件和库用于大端序的 64 位 ARM Linux 系统。</li>
+</ul>
+</li>
+<li><strong>arm-eabi</strong>
+<ul>
+<li>针对 32 位 ARM 架构（ARMv7 及之前版本），常用于嵌入式系统开发，生成不依赖操作系统环境的可执行文件和库，类似 aarch64-elf 但适用于 32 位架构。</li>
+</ul>
+</li>
+<li><strong>arm-linux-gnueabi</strong>
+<ul>
+<li>适用于 32 位 ARM 架构的 Linux 系统编译链，生成的可执行文件和库可在 32 位 ARM Linux 系统上运行，支持标准 Linux 系统调用和功能。</li>
+</ul>
+</li>
+<li><strong>arm-linux-gnueabihf</strong>
+<ul>
+<li>与 arm-linux-gnueabi 类似，针对硬件浮点运算（hard-float）优化，在具有硬件浮点单元的 32 位 ARM 设备上可提升浮点运算性能。</li>
+</ul>
+</li>
+<li><strong>armeb-eabi</strong>
+<ul>
+<li>32 位 ARM 大端序架构的编译链，生成不依赖操作系统环境的可执行文件和库，与 arm-eabi 区别在于字节序为大端序。</li>
+</ul>
+</li>
+<li><strong>armeb-linux-gnueabi</strong>
+<ul>
+<li>用于 32 位 ARM 大端序架构的 Linux 系统编译链，生成的可执行文件和库用于大端序的 32 位 ARM Linux 系统。</li>
+</ul>
+</li>
+<li><strong>armeb-linux-gnueabihf</strong>
+<ul>
+<li>结合 32 位 ARM 大端序架构和硬件浮点运算优化的 Linux 系统编译链。</li>
+</ul>
+</li>
+<li><strong>armv8l-linux-gnueabihf</strong>
+<ul>
+<li>针对 ARMv8 架构的 32 位兼容模式（AArch32）且支持硬件浮点运算，用于生成在此特定架构 Linux 系统上运行的可执行文件和库。</li>
+</ul>
+</li>
+</ol>
+<h2 id="三-平台选择与下载">三、平台选择与下载</h2>
+<p><img src="https://liantoki.github.io/post-images/1736684683997.png" alt="" loading="lazy"><br>
+选定编译链后进入下一页面，此页面依据编译平台进行选择。编译链文件以 <code>gcc</code> 开头（后缀为 <code>asc</code> 和 <code>txt</code> 的文件并非编译链），如 <code>i686-mingw</code> 表示在 <code>i686</code> 架构的 <code>mingw</code> 环境运行，其他编译链同理。</p>
+<h2 id="四-安装与环境配置">四、安装与环境配置</h2>
+<p><img src="https://liantoki.github.io/post-images/1736684694768.png" alt="" loading="lazy"><br>
+在 Linux 环境下完成下载后进行解压操作，接着在 <code>/etc/profile</code> 文件中设置解压后的 <code>bin</code>、<code>lib</code> 目录地址为环境变量，从而完成安装与环境配置。</p>
+]]></content>
+    </entry>
+</feed>
