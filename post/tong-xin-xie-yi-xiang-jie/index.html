@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>通信协议详解 | hzh&#39;s blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://liantoki.github.io/favicon.ico?v=1741619485828">
+<link rel="stylesheet" href="https://liantoki.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="
+IIC通信协议
+1.1. 概述
+IIC协议(inter-integrated Circuit)，是一种用于电子设备之间进行通信和数据交换的串行通信协议。由Philips公司于 1982 年首次提出并推广的一种简单、高效、低成本的通信协议。..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://liantoki.github.io">
+        <img src="https://liantoki.github.io/images/avatar.png?v=1741619485828" class="site-logo">
+        <h1 class="site-title">hzh&#39;s blog</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/tags" class="site-nav" target="_blank">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/post/you-lian" class="site-nav">
+            友链
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://liantoki.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">通信协议详解</h2>
+            <div class="post-date">2025-02-25</div>
+            
+            <div class="post-content" v-pre>
+              <ol>
+<li>IIC通信协议<br>
+1.1. 概述<br>
+IIC协议(inter-integrated Circuit)，是一种用于电子设备之间进行通信和数据交换的串行通信协议。由Philips公司于 1982 年首次提出并推广的一种简单、高效、低成本的通信协议。<br>
+IIC协议用于低速短距离场合，且因为其软硬件实现都较为简单引脚占用较少，常用于微控制器和嵌入式系统中。<br>
+1.2 物理层<br>
+1.2.1 引脚信息<br>
+SDA(Serial data):串行数据线，用于双向数据传输<br>
+SCL(Serial clock line):串行时钟线，用于同步数据传输的时钟信号<br>
+1.2.2 特性<br>
+SCL和SDA都需要接上拉电阻 (大小由速度和容性负载决定一般在3.3K-10K之间)<br>
+主设备功能：主要产生时钟，产生起始信号和停止信号<br>
+从设备功能：可编程的IIC地址检测，停止位检测<br>
+支持多主控，任何一个能够进行发送和接收的设备都可以成为主总线，同一时刻只能有一个主控。<br>
+支持不同速率的通讯速度，标准速度(最高速度100kHZ),快速（最高400kHZ）<br>
+因为只有一根数据线，所以只支持半双工，同一时间只可以单向通信<br>
+IIC器件地址： 每一个IIC器件都有一个器件地址<br>
+各设备连接到总线的输出端时必须是漏极开路（OD）输出或集电极开路（OC）输出。<br>
+1.2.3 IIC通信中使用OC或OD输出的原因：<br>
+①能够产生高阻态，以此来脱离总线，避免信号冲突<br>
+②满足“线与”特性</li>
+</ol>
+<p>1.2.4 使用线与的原因：<br>
+①当所有设备的输出都为高电平时，总线才呈现高电平；只要有一个设备输出低电平，总线就为低电平。这一特性能够保证控制时钟线的主设备只有一个，避免多主设备时场伤信号冲突，从而实现总线仲裁效果<br>
+②提高了容错能力，总线上的器件增加和删除不影响其他器件正常工作</p>
+<p>1.2.5 上拉电阻的作用：<br>
+高阻态电平不稳定，无法保证空闲状态的稳定性，将高阻态拉高成高电平可以提供稳定的高电平信号，确保数据正常传输</p>
+<p>1.3协议层<br>
+1.3.1 简述：<br>
+I2C 总线在传送数据过程中共有三种类型信号， 它们分别是：开始信号、结束信号和应答信号。其中开始信号是必须存在的。<br>
+1.3.2通信的几种状态<br>
+①初始状态<br>
+初始状态也是空闲状态，不进行任何数据通信。因此SDA和SCL均为高电平</p>
+<pre><code class="language-c">void IIC_Init()
+{
+    SCL(1);
+    delay_us(4);
+    SDA(1);
+    delay_us(4);
+}
+</code></pre>
+<p>②开始信号<br>
+SCL保持高电平，SDA从高到低后，延时(&gt;4.7us)，SCL变为低电平</p>
+<pre><code class="language-c">void IIC_Start()
+{
+    SDA(1);
+    SCL(1);
+    SDA(0);
+    delay_us(5);
+    SCL(0);
+}
+</code></pre>
+<p>③停止信号<br>
+SCL保持高电平，SDA从低到高</p>
+<pre><code class="language-c">void IIC_Stop()
+{
+    SCL(0);
+    SDA(0);
+    delay_us(2);
+    SCL(1);
+    delay_us(5);
+    SDA(1);
+    delay_us(5);
+}
+</code></pre>
+<p>④应答信号：每当主机向从机发送完一个字节的数据，主机总是需要等待从机给出一个应答信号，以确认从机是否成功接收到了数据<br>
+SCL拉高，读取从机SDA的电平，低电平为有效应答，表示成功接收到该字节，反之，不成功。</p>
+<pre><code class="language-c">//主机产生应答信号ACK
+//1.先拉低SCL，再拉低SDA
+//2.拉高SCL
+//3.拉低SCL
+void IIC_Ack()
+{
+    SCL(0);
+    SDA(0);
+    delay_us(2);
+    SCL(1);
+    delay_us(5);
+    SCL(0);
+}
+//主机产生应答信号ACK
+//1.先拉低SCL，再拉高SDA
+//2.拉高SCL
+//3.拉低SCL
+void IIC_Nack()
+{
+    SCL(0);
+    SDA(1);
+    delay_us(2);
+    SCL(1);
+    delay_us(5);
+    SCL(0);
+}
+//主机等待应答信号
+//1.先拉低SCL，再拉高SDA
+//2.拉高SCL
+//3.拉低SCL
+int IIC_Wait_Ack()
+{
+    int Nack_time=0;
+    IIC_SDA=1;delay_us(1);	   
+	IIC_SCL=1;delay_us(1);	 
+	while(SDA_Read())
+	{
+		ucErrTime++;
+		if(ucErrTime&gt;250)
+		{
+			IIC_Stop();
+			return 1;
+		}
+	}
+	SCL(0);//时钟输出0 	   
+	return 0;  
+}
+</code></pre>
+<p>1.3.3 特性<br>
+①开始信号产生后，总线处于忙状态，由本次数据传输的主从设备独占，其他总线上的器件无法访问总线；而在停止信号产生后，本次数据传输的主从设备将释放总线，总线再次处于空闲状态。<br>
+②数据有效性：IIC信号在数据传输过程中，SCL为高电平时，SDA电平如果不变将作为有效数据传输，如果改变会被看做开始或停止信号，只有当SCL为低电平时，才允许SDA的电平变化。因此数据传输时,SCL也要频繁变化。<br>
+③每一个时钟周期的SCL都必须包含完整的低→高→低跳变。</p>
+<p>1.3.4数据传输格式<br>
+输出到SDA线上的每个字节必须是8位，先传输最高位（MSB），每个字节后面都会跟随一个应答位。<br>
+发送数据：8bit数据+1bit ACK<br>
+设备地址数据：7bit设备地址+1bit W/R+1bit ACK(W=0,R=1)<br>
+1.3.5通信流程（图片均来自EM7028数据手册）<br>
+①主机向从机写数据<br>
+<img src="https://liantoki.github.io/post-images/1740623980375.png" alt="" loading="lazy"><br>
+②主机读从机数据<br>
+<img src="https://liantoki.github.io/post-images/1740624026618.png" alt="" loading="lazy"><br>
+③主机向从机的寄存器写数据<br>
+<img src="https://liantoki.github.io/post-images/1740624276361.png" alt="" loading="lazy"><br>
+④主机读从机的寄存器数据<br>
+<img src="https://liantoki.github.io/post-images/1740624354963.png" alt="" loading="lazy"></p>
+<ol start="2">
+<li>SPI通信协议<br>
+2.1.</li>
+</ol>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://liantoki.github.io/post/nei-cun-guan-li/">
+                  <h3 class="post-title">
+                    嵌入式系统内存管理
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

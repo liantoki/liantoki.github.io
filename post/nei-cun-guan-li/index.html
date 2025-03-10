@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>嵌入式系统内存管理 | hzh&#39;s blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://liantoki.github.io/favicon.ico?v=1741619485828">
+<link rel="stylesheet" href="https://liantoki.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="1.内存四区
+1.1 代码区：
+①代码区存放CPU执行的机器指令既程序汇编而成的二进制代码
+②代码区是共享的，对于频繁执行的程序，内存中只需要保存一份即可
+③代码区是只读的，只读的原因是防止程序意外修改了指令
+1.2 全局区：
+①全局变量和..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://liantoki.github.io">
+        <img src="https://liantoki.github.io/images/avatar.png?v=1741619485828" class="site-logo">
+        <h1 class="site-title">hzh&#39;s blog</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/tags" class="site-nav" target="_blank">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/post/you-lian" class="site-nav">
+            友链
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://liantoki.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">嵌入式系统内存管理</h2>
+            <div class="post-date">2025-02-23</div>
+            
+            <div class="post-content" v-pre>
+              <p>1.内存四区<br>
+1.1 代码区：<br>
+①代码区存放CPU执行的机器指令既程序汇编而成的二进制代码<br>
+②代码区是共享的，对于频繁执行的程序，内存中只需要保存一份即可<br>
+③代码区是只读的，只读的原因是防止程序意外修改了指令<br>
+1.2 全局区：<br>
+①全局变量和static修饰的静态变量存放在此<br>
+②全局区存放的常量包括字符串常量和const修饰的全局变量，而局部常量存放在栈区<br>
+③该区域的数据在程序结束后由操作系统释放<br>
+1.3 堆区：<br>
+①该区域由程序员分配和释放，若程序员不释放，程序结束时由操作系统回收<br>
+②C一般用malloc和free进行堆区的分配和释放<br>
+③C++一般用new和delet进行堆区的分配和释放<br>
+1.4 栈区：<br>
+①由编译器自动分配释放，存放函数的参数、局部变量(不包括静态局部变量和指向堆区的局部指针变量)等<br>
+②在函数运行完后编译器会回收所有函数的参数和存放在栈区的局部变量的地址，因此不能直接返回存放他们的地址<br>
+1.5 内存划分四区的意义：将不同类型数据和代码存放在各自独立的区域可以使得我们更好地管理和利用内存资源<br>
+1.6 程序运行前后可将四区划分为两部分：<br>
+运行前：以可执行文件的形式存在，可执行文件包含代码区和全局区的静态信息，但内存尚未分配。<br>
+运行后：操作系统加载代码区和全局区到内存(嵌入式中即是手动将代码区和全局区烧写到flash)，并动态分配栈和堆，四个区域同时存在并共同作用。<br>
+核心差异：栈和堆是运行时动态管理的区域，而代码区和全局区是静态预定义的区域。</p>
+<p>2.程序运行前后对应的内存分布<br>
+2.1不运行时的内存分布：<br>
+程序不运行时以文件形式存在，文件主要分三部分：文件头（提供代码区和全局区的长度信息）、代码区和全局区<br>
+2.2运行时的内存分布：<br>
+可执行文件被系统加载到内存中并动态分配堆和栈的区域：<br>
+高地址<br>
+┌───────────────┐<br>
+│     栈区      │ ← 栈向下增长<br>
+├───────────────┤<br>
+│               │<br>
+│     堆区      │ ← 堆向上增长<br>
+├───────────────┤<br>
+│   .bss段      │ （未初始化的全局变量）<br>
+├───────────────┤<br>
+│   .data段     │ （已初始化的全局变量）<br>
+├───────────────┤<br>
+│   代码区      │ （程序指令）<br>
+└───────────────┘<br>
+低地址</p>
+<p>运行时，代码区和全局区会先移动到Flash中，之后分配栈区和堆区的同时.bss段被初始化后全局区会被整段的映射到RAM中，以此来达成，方便读写且只被初始化一次的效果。</p>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://liantoki.github.io/post/nei-zhi-han-shu/">
+                  <h3 class="post-title">
+                    内置函数
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>
