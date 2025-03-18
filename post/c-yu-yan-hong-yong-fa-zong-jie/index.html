@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>C语言宏用法总结 | hzh&#39;s blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://liantoki.github.io/favicon.ico?v=1742309992146">
+<link rel="stylesheet" href="https://liantoki.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="
+C语言宏用法总结
+目录
+
+宏定义
+1.1 宏常量
+1.2 宏语句
+1.3 宏函数
+1.4 带参数宏定义
+运算符
+2.1 #运算符
+2.2 ##运算符
+可变宏
+3.1 基本定义
+3.2 空参数处理
+3.3 注意事项
+预定义宏与高级技巧
+4...." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://liantoki.github.io">
+        <img src="https://liantoki.github.io/images/avatar.png?v=1742309992146" class="site-logo">
+        <h1 class="site-title">hzh&#39;s blog</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/tags" class="site-nav" target="_blank">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/post/you-lian" class="site-nav">
+            友链
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://liantoki.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">C语言宏用法总结</h2>
+            <div class="post-date">2025-02-17</div>
+            
+            <div class="post-content" v-pre>
+              <div id="toc"></div>
+<h1 id="c语言宏用法总结">C语言宏用法总结</h1>
+<h2 id="目录">目录</h2>
+<ol>
+<li><a href="#macro-definition">宏定义</a><br>
+1.1 <a href="#macro-constant">宏常量</a><br>
+1.2 <a href="#macro-statement">宏语句</a><br>
+1.3 <a href="#macro-function">宏函数</a><br>
+1.4 <a href="#macro-with-params">带参数宏定义</a></li>
+<li><a href="#operators">运算符</a><br>
+2.1 <a href="#operator-sharp">#运算符</a><br>
+2.2 <a href="#operator-double-sharp">##运算符</a></li>
+<li><a href="#variadic-macros">可变宏</a><br>
+3.1 <a href="#variadic-basic">基本定义</a><br>
+3.2 <a href="#variadic-empty-args">空参数处理</a><br>
+3.3 <a href="#variadic-notes">注意事项</a></li>
+<li><a href="#advanced-macros">预定义宏与高级技巧</a><br>
+4.1 <a href="#predefined-macros">预定义宏</a><br>
+4.2 <a href="#conditional-compilation">条件编译</a><br>
+4.3 <a href="#debugging-tips">调试技巧</a><br>
+4.4 <a href="#alternatives">替代方案</a></li>
+</ol>
+<hr>
+<p><a id="macro-definition"></a></p>
+<h2 id="1-宏定义">1. 宏定义</h2>
+<p><a id="macro-constant"></a></p>
+<h3 id="11-宏常量">1.1 宏常量</h3>
+<ul>
+<li><strong>不带参数</strong><pre><code class="language-c">#define PI 3.14
+</code></pre>
+</li>
+<li><strong>带参数</strong><pre><code class="language-c">#define SQUARE(x) ((x) * (x))
+</code></pre>
+</li>
+</ul>
+<p><a id="macro-statement"></a></p>
+<h3 id="12-宏语句">1.2 宏语句</h3>
+<ul>
+<li><strong>不带参数</strong><pre><code class="language-c">#define LOG_HELLO printf(&quot;hello&quot;)
+</code></pre>
+</li>
+<li><strong>带参数</strong><pre><code class="language-c">#define LOG_MSG(x) printf(&quot;%s\n&quot;, x)
+</code></pre>
+</li>
+</ul>
+<p><a id="macro-function"></a></p>
+<h3 id="13-宏函数">1.3 宏函数</h3>
+<ul>
+<li><strong>格式规范</strong><br>
+使用 <code>do { ... } while(0)</code> 避免语法问题：<pre><code class="language-c">#define SAFE_CALL(x) do { func(x); cleanup(); } while(0)
+</code></pre>
+</li>
+</ul>
+<p><a id="macro-with-params"></a></p>
+<h3 id="14-带参数宏定义">1.4 带参数宏定义</h3>
+<ul>
+<li><strong>核心规则</strong>
+<ul>
+<li>参数替换为符号，无类型检查</li>
+<li>宏名与括号间不能有空格</li>
+</ul>
+</li>
+<li><strong>与函数的区别</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>宏</th>
+<th>函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>展开时间</strong></td>
+<td>预处理阶段</td>
+<td>运行时</td>
+</tr>
+<tr>
+<td><strong>类型检查</strong></td>
+<td>无</td>
+<td>有</td>
+</tr>
+<tr>
+<td><strong>内存分配</strong></td>
+<td>无</td>
+<td>需要栈空间</td>
+</tr>
+<tr>
+<td><strong>代码体积</strong></td>
+<td>展开后代码膨胀</td>
+<td>固定体积</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a id="operators"></a></p>
+<h2 id="2-运算符">2. 运算符</h2>
+<p><a id="operator-sharp"></a></p>
+<h3 id="21-运算符">2.1 <code>#</code> 运算符</h3>
+<ul>
+<li><strong>作用</strong>：将参数转换为字符串<pre><code class="language-c">#define STR(x) #x
+STR(hello) // 展开为 &quot;hello&quot;
+</code></pre>
+</li>
+</ul>
+<p><a id="operator-double-sharp"></a></p>
+<h3 id="22-运算符">2.2 <code>##</code> 运算符</h3>
+<ul>
+<li><strong>作用</strong>：强制拼接标识符<pre><code class="language-c">#define CONCAT(a, b) a##b
+CONCAT(var, 1) // 展开为 var1
+</code></pre>
+</li>
+<li><strong>必要性</strong>
+<ul>
+<li>直接拼接 <code>xy</code> 会保留空格，<code>##</code> 确保合并为单一标识符</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><a id="variadic-macros"></a></p>
+<h2 id="3-可变宏">3. 可变宏</h2>
+<p><a id="variadic-basic"></a></p>
+<h3 id="31-基本定义">3.1 基本定义</h3>
+<pre><code class="language-c">#define LOG(fmt, ...) printf(fmt, __VA_ARGS__)
+LOG(&quot;Value: %d&quot;, 42); // 展开为 printf(&quot;Value: %d&quot;, 42)
+</code></pre>
+<p><a id="variadic-empty-args"></a></p>
+<h3 id="32-空参数处理">3.2 空参数处理</h3>
+<table>
+<thead>
+<tr>
+<th>标准</th>
+<th>解决方案</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GNU</strong></td>
+<td><code>##__VA_ARGS__</code></td>
+<td><code>printf(fmt, ##__VA_ARGS__)</code></td>
+</tr>
+<tr>
+<td><strong>C99</strong></td>
+<td>手动添加空参数占位符</td>
+<td><code>LOG(&quot;Hello&quot;, );</code></td>
+</tr>
+<tr>
+<td><strong>C11</strong></td>
+<td><code>__VA_OPT__(,)</code></td>
+<td><code>printf(fmt __VA_OPT__(,) ...)</code></td>
+</tr>
+</tbody>
+</table>
+<p><a id="variadic-notes"></a></p>
+<h3 id="33-注意事项">3.3 注意事项</h3>
+<ol>
+<li><strong>参数顺序</strong>：<code>...</code> 必须位于参数列表末尾</li>
+<li><strong>编译器兼容性</strong>
+<ul>
+<li>GCC：支持 <code>##__VA_ARGS__</code></li>
+<li>MSVC：需启用 <code>/Zc:preprocessor</code></li>
+</ul>
+</li>
+<li><strong>类型安全</strong>：需手动匹配格式化字符串与参数类型</li>
+</ol>
+<hr>
+<p><a id="advanced-macros"></a></p>
+<h2 id="4-预定义宏与高级技巧">4. 预定义宏与高级技巧</h2>
+<p><a id="predefined-macros"></a></p>
+<h3 id="41-预定义宏">4.1 预定义宏</h3>
+<ul>
+<li><strong>编译器内置宏</strong>：<br>
+用于获取编译环境或代码位置信息：<pre><code class="language-c">printf(&quot;File: %s, Line: %d\n&quot;, __FILE__, __LINE__);   // 输出当前文件和行号
+printf(&quot;Compiled on: %s %s\n&quot;, __DATE__, __TIME__);   // 输出编译日期和时间
+</code></pre>
+</li>
+</ul>
+<p><a id="conditional-compilation"></a></p>
+<h3 id="42-条件编译与宏结合">4.2 条件编译与宏结合</h3>
+<ul>
+<li><strong>根据宏定义选择代码路径</strong>：<pre><code class="language-c">#define DEBUG 1
+#if DEBUG
+  #define LOG(x) printf(&quot;[DEBUG] %s\n&quot;, x)
+#else
+  #define LOG(x) (void)0
+#endif
+</code></pre>
+</li>
+<li><strong>检查宏是否存在</strong>：<pre><code class="language-c">#ifdef PI
+  // PI已定义时执行
+#else
+  #define PI 3.14
+#endif
+</code></pre>
+</li>
+</ul>
+<p><a id="debugging-tips"></a></p>
+<h3 id="43-宏调试技巧">4.3 宏调试技巧</h3>
+<ul>
+<li><strong>查看宏展开结果</strong>：<br>
+使用编译器选项（如GCC的<code>-E</code>）输出预处理后的代码：<pre><code class="language-bash">gcc -E source.c -o source.i
+</code></pre>
+</li>
+<li><strong>静态断言（C11）</strong>：<br>
+结合宏实现编译时检查：<pre><code class="language-c">#define STATIC_ASSERT(cond) _Static_assert(cond, #cond)
+STATIC_ASSERT(sizeof(int) == 4); // 若int不为4字节则编译失败
+</code></pre>
+</li>
+</ul>
+<p><a id="alternatives"></a></p>
+<h3 id="44-宏的替代方案">4.4 宏的替代方案</h3>
+<ul>
+<li><strong>内联函数</strong>：<br>
+避免宏的副作用，支持类型检查：<pre><code class="language-c">static inline int square(int x) { return x * x; }
+</code></pre>
+</li>
+<li><strong>泛型选择（C11）</strong>：<br>
+使用<code>_Generic</code>替代宏实现泛型逻辑：<pre><code class="language-c">#define TYPE_NAME(x) _Generic((x), \
+  int: &quot;int&quot;, double: &quot;double&quot;, default: &quot;unknown&quot;)
+</code></pre>
+</li>
+</ul>
+<hr>
+<h2 id="补充宏的常见陷阱与最佳实践">补充：宏的常见陷阱与最佳实践</h2>
+<ol>
+<li>
+<p><strong>多次求值问题</strong>：<br>
+避免在宏参数中使用自增/自减操作：</p>
+<pre><code class="language-c">#define SQUARE(x) ((x) * (x))
+int a = 5;
+SQUARE(a++); // 展开为 (a++) * (a++) → 结果不可预测！
+</code></pre>
+</li>
+<li>
+<p><strong>参数未括号化</strong>：<br>
+宏参数需用括号包裹以防止运算符优先级问题：</p>
+<pre><code class="language-c">#define ADD(x, y) x + y       // 错误：ADD(1, 2)*3 → 1 + 2*3
+#define SAFE_ADD(x, y) ((x) + (y)) // 正确
+</code></pre>
+</li>
+<li>
+<p><strong>命名冲突与作用域管理</strong>：</p>
+<ul>
+<li>使用<code>#undef</code>释放不再需要的宏：<pre><code class="language-c">#define TEMP_MACRO 42
+// 使用后释放
+#undef TEMP_MACRO
+</code></pre>
+</li>
+<li>在局部作用域内定义宏（通过<code>#pragma push_macro/pop_macro</code>，部分编译器支持）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<div style="text-align: center; margin-top: 20px;">
+  <a href="#toc">返回目录</a>
+</div>
+```
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://liantoki.github.io/post/mo-kuai-jie-kou-she-ji-gui-fan/">
+                  <h3 class="post-title">
+                    模块接口设计规范
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

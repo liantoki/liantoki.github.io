@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>linux下安装arm交叉编译链 | hzh&#39;s blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://liantoki.github.io/favicon.ico?v=1742309992146">
+<link rel="stylesheet" href="https://liantoki.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="一、版本选择
+访问 https://releases.linaro.org/components/toolchain/binaries/，页面呈现如下内容：
+
+依据自身需求点击进入特定版本，该页面提供了适用于 arm 架构的各类编译链。
+
+..." />
+    <meta name="keywords" content="帖子" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://liantoki.github.io">
+        <img src="https://liantoki.github.io/images/avatar.png?v=1742309992146" class="site-logo">
+        <h1 class="site-title">hzh&#39;s blog</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/tags" class="site-nav" target="_blank">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/post/you-lian" class="site-nav">
+            友链
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://liantoki.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">linux下安装arm交叉编译链</h2>
+            <div class="post-date">2025-01-12</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="一-版本选择">一、版本选择</h2>
+<p>访问 <a href="https://releases.linaro.org/components/toolchain/binaries/">https://releases.linaro.org/components/toolchain/binaries/</a>，页面呈现如下内容：<br>
+<img src="https://liantoki.github.io/post-images/1736684625936.png" alt="" loading="lazy"><br>
+依据自身需求点击进入特定版本，该页面提供了适用于 arm 架构的各类编译链。<br>
+<img src="https://liantoki.github.io/post-images/1736684949477.png" alt="" loading="lazy"></p>
+<h2 id="二-编译链详情">二、编译链详情</h2>
+<ol>
+<li><strong>aarch64-elf</strong>
+<ul>
+<li>面向 64 位 ARM 架构（AArch64），主要应用于嵌入式系统开发。其生成的可执行文件和库不依赖完整的 Linux 操作系统环境，常用于裸机编程或简单嵌入式系统。</li>
+</ul>
+</li>
+<li><strong>aarch64-linux - gnu</strong>
+<ul>
+<li>同样针对 64 位 ARM 架构，用于创建能在 Linux 操作系统环境下运行的可执行文件和库，支持完整的 Linux 系统调用与功能，适用于开发 64 位 ARM Linux 系统上的应用程序和系统组件。</li>
+</ul>
+</li>
+<li><strong>aarch64_be-elf</strong>
+<ul>
+<li>类似 aarch64-elf，但采用大端序（big - endian）字节序，而 aarch64 - elf 通常为小端序（little - endian），在特定硬件或系统要求大端序的场景中使用。</li>
+</ul>
+</li>
+<li><strong>aarch64_be-linux-gnu</strong>
+<ul>
+<li>针对 64 位 ARM 大端序架构的 Linux 系统编译链，生成的可执行文件和库用于大端序的 64 位 ARM Linux 系统。</li>
+</ul>
+</li>
+<li><strong>arm-eabi</strong>
+<ul>
+<li>针对 32 位 ARM 架构（ARMv7 及之前版本），常用于嵌入式系统开发，生成不依赖操作系统环境的可执行文件和库，类似 aarch64-elf 但适用于 32 位架构。</li>
+</ul>
+</li>
+<li><strong>arm-linux-gnueabi</strong>
+<ul>
+<li>适用于 32 位 ARM 架构的 Linux 系统编译链，生成的可执行文件和库可在 32 位 ARM Linux 系统上运行，支持标准 Linux 系统调用和功能。</li>
+</ul>
+</li>
+<li><strong>arm-linux-gnueabihf</strong>
+<ul>
+<li>与 arm-linux-gnueabi 类似，针对硬件浮点运算（hard-float）优化，在具有硬件浮点单元的 32 位 ARM 设备上可提升浮点运算性能。</li>
+</ul>
+</li>
+<li><strong>armeb-eabi</strong>
+<ul>
+<li>32 位 ARM 大端序架构的编译链，生成不依赖操作系统环境的可执行文件和库，与 arm-eabi 区别在于字节序为大端序。</li>
+</ul>
+</li>
+<li><strong>armeb-linux-gnueabi</strong>
+<ul>
+<li>用于 32 位 ARM 大端序架构的 Linux 系统编译链，生成的可执行文件和库用于大端序的 32 位 ARM Linux 系统。</li>
+</ul>
+</li>
+<li><strong>armeb-linux-gnueabihf</strong>
+<ul>
+<li>结合 32 位 ARM 大端序架构和硬件浮点运算优化的 Linux 系统编译链。</li>
+</ul>
+</li>
+<li><strong>armv8l-linux-gnueabihf</strong>
+<ul>
+<li>针对 ARMv8 架构的 32 位兼容模式（AArch32）且支持硬件浮点运算，用于生成在此特定架构 Linux 系统上运行的可执行文件和库。</li>
+</ul>
+</li>
+</ol>
+<h2 id="三-平台选择与下载">三、平台选择与下载</h2>
+<p><img src="https://liantoki.github.io/post-images/1736684683997.png" alt="" loading="lazy"><br>
+选定编译链后进入下一页面，此页面依据编译平台进行选择。编译链文件以 <code>gcc</code> 开头（后缀为 <code>asc</code> 和 <code>txt</code> 的文件并非编译链），如 <code>i686-mingw</code> 表示在 <code>i686</code> 架构的 <code>mingw</code> 环境运行，其他编译链同理。</p>
+<h2 id="四-安装与环境配置">四、安装与环境配置</h2>
+<p><img src="https://liantoki.github.io/post-images/1736684694768.png" alt="" loading="lazy"><br>
+在 Linux 环境下完成下载后进行解压操作，接着在 <code>/etc/profile</code> 文件中设置解压后的 <code>bin</code>、<code>lib</code> 目录地址为环境变量，从而完成安装与环境配置。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://liantoki.github.io/tag/7PxyIWbkPX/" class="tag">
+                    帖子
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://liantoki.github.io/post/lvgl-switch/">
+                  <h3 class="post-title">
+                    LVGL
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

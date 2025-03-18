@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>模块接口设计规范 | hzh&#39;s blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://liantoki.github.io/favicon.ico?v=1742309992146">
+<link rel="stylesheet" href="https://liantoki.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="
+
+  📑 目录
+  
+    名词解释
+    模块接口设计
+      
+        USB接口
+        HDMI接口
+        晶振接口
+      
+    
+  
+
+
+
+📖 名词解释
+1. 3W规则
+
+定义：..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://liantoki.github.io">
+        <img src="https://liantoki.github.io/images/avatar.png?v=1742309992146" class="site-logo">
+        <h1 class="site-title">hzh&#39;s blog</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/tags" class="site-nav" target="_blank">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/post/you-lian" class="site-nav">
+            友链
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://liantoki.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">模块接口设计规范</h2>
+            <div class="post-date">2025-01-29</div>
+            
+            <div class="post-content" v-pre>
+              <!--- 目录导航 -->
+<div style="border: 1px solid #e1e4e8; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+  <h2 style="margin-top: 0;">📑 目录</h2>
+  <ul>
+    <li><a href="#名词解释">名词解释</a></li>
+    <li><a href="#模块接口设计">模块接口设计</a>
+      <ul>
+        <li><a href="#usb接口">USB接口</a></li>
+        <li><a href="#hdmi接口">HDMI接口</a></li>
+        <li><a href="#晶振接口">晶振接口</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<!--- 名词解释 -->
+<p><a id="名词解释"></a></p>
+<h2 id="名词解释">📖 名词解释</h2>
+<h3 id="1-3w规则">1. 3W规则</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>定义：</strong>信号线的中心间距不少于3倍线宽时，可保证70%的电场不互相干扰。<br>
+<strong>应用：</strong>
+- 2W间距 → 50%电场隔离
+- 10W间距 → 98%电场隔离
+</div>
+<h3 id="2-20h规则">2. 20H规则</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>定义：</strong>电源层相对地层内缩20H（H为介质厚度），限制70%电场在接地区域内。<br>
+<strong>设计建议：</strong>
+- 内缩1mm或>20mil（优先40mil）
+- 内缩100H → 98%电场隔离
+</div>
+<h3 id="3-esd器件静电放电保护器件">3. ESD器件（静电放电保护器件）</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>作用：</strong>防止静电放电（ESD）损坏电路，泄放瞬时高压（数千伏）。<br>
+<strong>典型器件：</strong>TVS二极管、压敏电阻（MOV）
+</div>
+<h3 id="4-emi滤波器电磁干扰滤波器">4. EMI滤波器（电磁干扰滤波器）</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>作用：</strong>抑制高频噪声和电磁辐射，确保EMC合规性。<br>
+<strong>典型应用：</strong>共模电感、π型滤波器
+</div>
+<h3 id="5-zdiff差分阻抗">5. Zdiff（差分阻抗）</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>定义：</strong>USB差分信号线特性阻抗，需控制为<mark>90Ω</mark>。<br>
+<strong>关键因素：</strong>线宽、间距、PCB介质材料
+</div>
+<h3 id="6-共模电感">6. 共模电感</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<strong>作用：</strong>抑制共模噪声，降低EMI辐射。<br>
+<strong>原理：</strong>对共模噪声高阻抗，对差分信号低阻抗
+</div>
+<!--- 模块接口设计 -->
+<p><a id="模块接口设计"></a></p>
+<h2 id="️-模块接口设计">🛠️ 模块接口设计</h2>
+<p><a id="usb接口"></a></p>
+<h3 id="usb接口">🔌 USB接口</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<ol>
+  <li>接口靠近板边放置，方便拔插</li>
+  <li>ESD器件靠近接口，走线先经过ESD器件</li>
+  <li>EMI滤波器/共模电感靠近插座，防止辐射</li>
+  <li>阻抗控制：Zdiff=90Ω</li>
+  <li>差分信号总长≤6000mil</li>
+  <li>差分打孔包地，换层加屏蔽地过孔</li>
+  <li>差分对内等长误差±5mil</li>
+</ol>
+</div>
+<p><a id="hdmi接口"></a></p>
+<h3 id="hdmi接口">📺 HDMI接口</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<ol>
+  <li>优先板边放置（根据结构需求）</li>
+  <li>差分阻抗100Ω，单线50Ω</li>
+  <li>ESD器件紧贴端子</li>
+  <li>差分对内误差＜5mil，组内误差＜10mil</li>
+  <li>与其他信号间距≥15mil或3W</li>
+  <li>换层时加回流地过孔</li>
+</ol>
+</div>
+<p><a id="晶振接口"></a></p>
+<h3 id="晶振接口">⏳ 晶振接口</h3>
+<div style="background: #f6f8fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+<ol>
+  <li>走线最短化，避免过孔</li>
+  <li>GND过孔包围（包地处理）</li>
+  <li>同层不铺铜，其他层铺铜需净空</li>
+</ol>
+</div>
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://liantoki.github.io/post/an-zhuang-zui-xin-ban-arm-jiao-cha-bian-yi-lian/">
+                  <h3 class="post-title">
+                    linux下安装arm交叉编译链
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

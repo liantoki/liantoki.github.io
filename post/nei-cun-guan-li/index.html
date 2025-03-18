@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>嵌入式系统内存管理 | hzh&#39;s blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://liantoki.github.io/favicon.ico?v=1742309992146">
+<link rel="stylesheet" href="https://liantoki.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="以下是优化后的内容，结合Markdown与HTML实现可跳转目录：
+
+📚 目录
+
+  1. 内存四区
+    
+      1.1 代码区
+      1.2 全局区
+      1.3 堆区
+      1.4 栈区
+    
+  
+ ..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://liantoki.github.io">
+        <img src="https://liantoki.github.io/images/avatar.png?v=1742309992146" class="site-logo">
+        <h1 class="site-title">hzh&#39;s blog</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/tags" class="site-nav" target="_blank">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/post/you-lian" class="site-nav">
+            友链
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://liantoki.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">嵌入式系统内存管理</h2>
+            <div class="post-date">2025-02-23</div>
+            
+            <div class="post-content" v-pre>
+              <p>以下是优化后的内容，结合Markdown与HTML实现可跳转目录：</p>
+<div class="toc">
+<h2>📚 目录</h2>
+<ul>
+  <li><a href="#memory-areas">1. 内存四区</a>
+    <ul>
+      <li><a href="#code-area">1.1 代码区</a></li>
+      <li><a href="#global-area">1.2 全局区</a></li>
+      <li><a href="#heap-area">1.3 堆区</a></li>
+      <li><a href="#stack-area">1.4 栈区</a></li>
+    </ul>
+  </li>
+  <li><a href="#memory-distribution">2. 程序运行前后内存分布</a>
+    <ul>
+      <li><a href="#pre-run">2.1 运行前的内存分布</a></li>
+      <li><a href="#post-run">2.2 运行时的内存分布</a></li>
+    </ul>
+  </li>
+</ul>
+</div>
+<style>
+.toc {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.toc h2 { color: #2c3e50; margin-top: 0; }
+.toc a { color: #3498db; text-decoration: none; }
+.toc a:hover { color: #e74c3c; text-decoration: underline; }
+.toc ul { padding-left: 20px; list-style-type: '👉 '; }
+</style>
+<p><a id="memory-areas"></a></p>
+<h2 id="1-内存四区">1. 内存四区</h2>
+<p><a id="code-area"></a></p>
+<h3 id="11-代码区">1.1 代码区</h3>
+<p>📌 <strong>核心特性</strong>：</p>
+<ul>
+<li>存储CPU执行的<strong>机器指令</strong>（二进制代码）</li>
+<li><strong>共享性</strong>：高频程序只需内存保留一份（如标准库函数）</li>
+<li><strong>只读性</strong>：防止意外修改指令（如病毒防护）</li>
+</ul>
+<p>⚙️ <strong>操作系统管理</strong>：</p>
+<pre><code class="language-c">// 示例：代码区指令不可修改
+const char* code_segment = &quot;0x55 0x48 0x89 0xE5&quot;;  // 编译后进入代码区
+// 尝试修改会触发段错误（Segmentation Fault）
+</code></pre>
+<hr>
+<p><a id="global-area"></a></p>
+<h3 id="12-全局区">1.2 全局区</h3>
+<p>📦 <strong>存储内容</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>示例</th>
+<th>生命周期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全局变量</td>
+<td><code>int global_var = 10;</code></td>
+<td>程序结束释放</td>
+</tr>
+<tr>
+<td>静态变量（static修饰）</td>
+<td><code>static int static_var = 20;</code></td>
+<td>程序结束释放</td>
+</tr>
+<tr>
+<td>字符串常量</td>
+<td><code>&quot;Hello, World!&quot;</code></td>
+<td>程序结束释放</td>
+</tr>
+<tr>
+<td>const全局常量</td>
+<td><code>const int MAX_LEN = 100;</code></td>
+<td>程序结束释放</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ <strong>注意</strong>：局部常量（如函数内const变量）存放在栈区</p>
+<hr>
+<p><a id="heap-area"></a></p>
+<h3 id="13-堆区">1.3 堆区</h3>
+<p>🛠️ <strong>操作方式</strong>：</p>
+<ul>
+<li><strong>C语言</strong>：<code>malloc</code>分配 / <code>free</code>释放<pre><code class="language-c">int* heap_arr = (int*)malloc(10 * sizeof(int));  // 分配堆内存
+free(heap_arr);  // 必须手动释放，否则内存泄漏
+</code></pre>
+</li>
+<li><strong>C++</strong>：<code>new</code>分配 / <code>delete</code>释放<pre><code class="language-cpp">int* heap_obj = new int(42);  // 动态创建对象
+delete heap_obj;              // 避免悬空指针
+</code></pre>
+</li>
+</ul>
+<p>🔍 <strong>特点</strong>：</p>
+<ul>
+<li><strong>手动管理</strong>：程序员需显式控制内存生命周期</li>
+<li><strong>碎片风险</strong>：频繁分配释放可能产生内存碎片</li>
+</ul>
+<hr>
+<p><a id="stack-area"></a></p>
+<h3 id="14-栈区">1.4 栈区</h3>
+<p>⚡ <strong>运行机制</strong>：</p>
+<pre><code class="language-c">void example_func() {
+    int local_var = 30;       // 栈区变量
+    int *alarm = (int *)malloc(sizeof(int)); //指向堆区
+    static int static_local;  // ❌ 静态局部变量在全局区不在栈区！
+    int* ptr = &amp;local_var;    // 指针本身在栈，但指向栈地址
+     int* ptr1 = alarm;    // ❌指针本身在栈，但指向堆地址
+}  // 函数结束时自动释放local_var和ptr，而ptr1指向的地址在堆区故不对此地址进行回收
+</code></pre>
+<p>🚫 <strong>禁止操作</strong>：</p>
+<pre><code class="language-c">int* dangerous_return() {
+    int local_val = 100;
+    return &amp;local_val;  // ❌ 返回栈地址会导致未定义行为
+}
+</code></pre>
+<hr>
+<p><a id="memory-distribution"></a></p>
+<h2 id="2-程序运行前后内存分布">2. 程序运行前后内存分布</h2>
+<p><a id="pre-run"></a></p>
+<h3 id="21-运行前的内存分布">2.1 运行前的内存分布</h3>
+<p>🔧 <strong>可执行文件结构</strong>：</p>
+<pre><code>┌───────────────┐
+│   文件头      │ → 包含代码区/全局区长度信息
+├───────────────┤
+│   代码区      │ → 机器指令（.text段）
+├───────────────┤
+│   全局区      │ → 已初始化数据（.data段）
+│               │   未初始化数据（.bss段）
+└───────────────┘
+</code></pre>
+<p><a id="post-run"></a></p>
+<h3 id="22-运行时的内存分布">2.2 运行时的内存分布</h3>
+<p>🏗️ <strong>内存布局</strong>：</p>
+<pre><code>高地址
+┌───────────────┐
+│     栈区      │ ← 向下增长（存储局部变量/参数）
+├───────────────┤
+│               │
+│     堆区      │ ← 向上增长（动态分配内存）
+├───────────────┤
+│   .bss段      │ ← 未初始化的全局变量（运行时清零）
+├───────────────┤
+│   .data段     │ ← 已初始化的全局变量
+├───────────────┤
+│   代码区      │ ← 只读指令（加载到Flash）
+└───────────────┘
+低地址
+</code></pre>
+<p>💡 <strong>关键差异</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>区域</th>
+<th>管理方式</th>
+<th>生命周期</th>
+<th>典型内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代码区</td>
+<td>静态预定义</td>
+<td>程序整个生命周期</td>
+<td>机器指令</td>
+</tr>
+<tr>
+<td>全局区</td>
+<td>静态预定义</td>
+<td>程序整个生命周期</td>
+<td>全局变量/静态变量</td>
+</tr>
+<tr>
+<td>堆区</td>
+<td>动态分配</td>
+<td>手动控制</td>
+<td>malloc/new对象</td>
+</tr>
+<tr>
+<td>栈区</td>
+<td>编译器自动管理</td>
+<td>函数作用域</td>
+<td>局部变量/参数</td>
+</tr>
+</tbody>
+</table>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://liantoki.github.io/post/nei-zhi-han-shu/">
+                  <h3 class="post-title">
+                    内置函数
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

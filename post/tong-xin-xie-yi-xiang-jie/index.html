@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>通信协议详解 | hzh&#39;s blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://liantoki.github.io/favicon.ico?v=1742309992146">
+<link rel="stylesheet" href="https://liantoki.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="
+📡 通信协议目录
+
+  1. I²C通信协议
+    
+      1.2 物理层
+      1.3 协议层
+    
+  
+  2. SPI通信协议
+    
+      2.4 工作模式
+      2.4.1 模式判断示例
+  ..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://liantoki.github.io">
+        <img src="https://liantoki.github.io/images/avatar.png?v=1742309992146" class="site-logo">
+        <h1 class="site-title">hzh&#39;s blog</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/tags" class="site-nav" target="_blank">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://liantoki.github.io/post/you-lian" class="site-nav">
+            友链
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://liantoki.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">通信协议详解</h2>
+            <div class="post-date">2025-02-25</div>
+            
+            <div class="post-content" v-pre>
+              <div class="toc">
+<h2>📡 通信协议目录</h2>
+<ul>
+  <li><a href="#iic">1. I²C通信协议</a>
+    <ul>
+      <li><a href="#iic-physical">1.2 物理层</a></li>
+      <li><a href="#iic-protocol">1.3 协议层</a></li>
+    </ul>
+  </li>
+  <li><a href="#spi">2. SPI通信协议</a>
+    <ul>
+      <li><a href="#spi-mode">2.4 工作模式</a></li>
+      <li><a href="#spi-example">2.4.1 模式判断示例</a></li>
+    </ul>
+  </li>
+</ul>
+</div>
+<style>
+.toc {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.toc a { color: #2c3e50; }
+.toc a:hover { color: #e74c3c; }
+</style>
+<p><a id="iic"></a></p>
+<h2 id="1-i2c通信协议">1. I²C通信协议</h2>
+<p><a id="iic-physical"></a></p>
+<h3 id="12-物理层">1.2 物理层</h3>
+<h4 id="123-ocod输出原因">1.2.3 OC/OD输出原因</h4>
+<pre><code class="language-c">// 开漏输出实现线与逻辑
+#define SDA_PIN_MODE()   GPIO_Mode_OD  // 配置为开漏模式
+#define SCL_PIN_MODE()   GPIO_Mode_OD
+</code></pre>
+<p><a id="iic-protocol"></a></p>
+<h3 id="13-协议层">1.3 协议层</h3>
+<h4 id="135-通信流程">1.3.5 通信流程</h4>
+<ul>
+<li><strong>写寄存器时序</strong>：<br>
+<img src="https://example.com/images/iic-write-register.png" alt="" loading="lazy"><br>
+（图片来源：EM7028数据手册）</li>
+</ul>
+<hr>
+<p><a id="spi"></a></p>
+<h2 id="2-spi通信协议">2. SPI通信协议</h2>
+<p><a id="spi-mode"></a></p>
+<h3 id="24-工作模式">2.4 工作模式</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>CPOL</th>
+<th>CPHA</th>
+<th>空闲时钟</th>
+<th>采样时刻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>低电平</td>
+<td>第一个时钟边沿</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>低电平</td>
+<td>第二个时钟边沿</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>高电平</td>
+<td>第一个时钟边沿</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1</td>
+<td>1</td>
+<td>高电平</td>
+<td>第二个时钟边沿</td>
+</tr>
+</tbody>
+</table>
+<p><a id="spi-example"></a></p>
+<h3 id="241-模式判断示例">2.4.1 模式判断示例</h3>
+<p><strong>ST7789V显示屏SPI模式判断</strong>：<br>
+<img src="https://example.com/images/st7789v-spi-timing.png" alt="" loading="lazy"><br>
+（图片来源：ST7789V数据手册）</p>
+<p><strong>分析步骤</strong>：</p>
+<ol>
+<li><strong>空闲状态观察</strong>：CS未拉低时SCLK保持<strong>低电平</strong> → <strong>CPOL=0</strong></li>
+<li><strong>数据采样点</strong>：数据在<strong>第一个上升沿</strong>被采样 → <strong>CPHA=0</strong></li>
+<li><strong>结论</strong>：该器件工作在 <strong>Mode 0</strong></li>
+</ol>
+<pre><code class="language-c">// STM32 SPI模式0配置
+SPI_InitTypeDef spi;
+spi.CLKPolarity = SPI_POLARITY_LOW;  // CPOL=0
+spi.CLKPhase = SPI_PHASE_1EDGE;      // CPHA=0
+HAL_SPI_Init(&amp;spi);
+</code></pre>
+<hr>
+<blockquote>
+<p><strong>注意</strong>：实际开发时务必以器件数据手册的时序图为准，图片URL需替换为实际可访问地址。</p>
+</blockquote>
+<pre><code></code></pre>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://liantoki.github.io/post/nei-cun-guan-li/">
+                  <h3 class="post-title">
+                    嵌入式系统内存管理
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>
